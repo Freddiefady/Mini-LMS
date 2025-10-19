@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
-Route::get('/', fn(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('welcome'))->name('home');
+Route::get('/', fn (): View => view('welcome'))->name('home');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -21,7 +22,7 @@ Route::middleware(['auth'])->group(function (): void {
 
     Volt::route('settings/two-factor', 'settings.two-factor')
         ->middleware(
-            when(
+            when(  // @phpstan-ignore-line
                 Features::canManageTwoFactorAuthentication()
                     && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
                 ['password.confirm'],
