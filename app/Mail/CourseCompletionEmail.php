@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Mail;
 
 use App\Models\Course;
@@ -10,7 +12,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CourseCompletionEmail extends Mailable
+final class CourseCompletionEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,8 +22,7 @@ class CourseCompletionEmail extends Mailable
     public function __construct(
         public User $user,
         public Course $course,
-    )
-    {
+    ) {
         //
     }
 
