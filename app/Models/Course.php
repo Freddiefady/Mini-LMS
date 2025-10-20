@@ -8,32 +8,17 @@ use App\Enums\StatusCoursesEnum;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
 
-/**
- * @property-read int $id
- * @property-read int $level_id
- * @property-read string $title
- * @property-read string $slug
- * @property-read string $description
- * @property-read string $image_url
- * @property-read string $status
- * @property-read Carbon $created_at
- * @property-read Carbon $updated_at
- * @property-read Level $level
- * @property-read Collection<int, Lesson> $lessons
- * @property-read Collection<int, Enrollment> $enrollments
- * @property-read Collection<int, CourseCompletion> $completions
- */
 final class Course extends Model
 {
     use HasFactory, Sluggable, SoftDeletes;
+
+    protected $fillable = ['level_id', 'title', 'slug', 'description', 'image_url', 'status'];
 
     /**
      * @return BelongsTo<Level, $this>

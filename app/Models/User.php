@@ -5,31 +5,24 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-/**
- * @property-read int $id
- * @property-read string $name
- * @property-read string $email
- * @property-read string $password
- * @property-read bool $is_admin
- * @property-read Carbon $created_at
- * @property-read Carbon $updated_at
- * @property-read Collection<int, Enrollment>
- * @property-read Collection<int, LessonProgress>
- * @property-read Collection<int, CourseCompletion>
- */
 final class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = ['name', 'email', 'password', 'is_admin'];
 
     /**
      * The attributes that should be hidden for serialization.
