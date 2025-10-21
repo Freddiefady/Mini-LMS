@@ -1,14 +1,15 @@
 <?php
 
+use App\Actions\Auth\CreateUser;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rules;
+use Illuminate\Http\Request;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use Illuminate\Validation\Rules;
 
-new #[Layout('components.layouts.auth')] class extends Component {
+
+new #[Layout('components.layouts.auth')]
+class extends Component {
     public string $name = '';
     public string $email = '';
     public string $password = '';
@@ -17,29 +18,26 @@ new #[Layout('components.layouts.auth')] class extends Component {
     /**
      * Handle an incoming registration request.
      */
-    public function register(): void
+    public function register(Request $request, CreateUser $action): void
     {
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ]);
+            $validated = $this->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+                'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            ]);
 
-        event(new Registered(($user = User::create($validated))));
-
-        Auth::login($user);
-
-        Session::regenerate();
-
-        $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
-    }
-}; ?>
+            $action->handle($validated['name'], $validated['email'], $validated['password']);
+            $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
+        }
+    };
+?>
 
 <div class="flex flex-col gap-6">
-    <x-auth-header :title="__('Create an account')" :description="__('Enter your details below to create your account')" />
+    <x-auth-header :title="__('Create an account')"
+                   :description="__('Enter your details below to create your account')"/>
 
     <!-- Session Status -->
-    <x-auth-session-status class="text-center" :status="session('status')" />
+    <x-auth-session-status class="text-center" :status="session('status')"/>
 
     <form method="POST" wire:submit="register" class="flex flex-col gap-6">
         <!-- Name -->
