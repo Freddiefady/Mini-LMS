@@ -4,14 +4,31 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\UserObserver;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
+/**
+ * @property-read int $id
+ * @property-read string $name
+ * @property-read string $email
+ * @property-read string $password
+ * @property-read bool $is_admin
+ * @property-read Carbon $created_at
+ * @property-read Carbon $updated_at
+ * @property-read Collection<int, Enrollment> $enrollments
+ * @property-read Collection<int, LessonProgress> $lesson_progress
+ * @property-read Collection<int, CourseCompletion> $course_completions
+ */
+#[ObservedBy(UserObserver::class)]
 final class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -48,16 +65,25 @@ final class User extends Authenticatable
             ->implode('');
     }
 
+    /**
+     * @return HasMany<Enrollment, $this>
+     */
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
     }
 
+    /**
+     * @return HasMany<LessonProgress, $this>
+     */
     public function lessonProgress(): HasMany
     {
         return $this->hasMany(LessonProgress::class);
     }
 
+    /**
+     * @return HasMany<CourseCompletion, $this>
+     */
     public function courseCompletions(): HasMany
     {
         return $this->hasMany(CourseCompletion::class);
