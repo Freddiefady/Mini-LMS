@@ -4,10 +4,24 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Policies\LessonProgressPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property-read int $id
+ * @property-read int $user_id
+ * @property-read int $lesson_id
+ * @property-read Carbon $started_at
+ * @property-read Carbon $completed_at
+ * @property-read int $watch_seconds
+ * @property-read Carbon $created_at
+ * @property-read Carbon $updated_at
+ */
+#[UsePolicy(LessonProgressPolicy::class)]
 final class LessonProgress extends Model
 {
     use HasFactory;

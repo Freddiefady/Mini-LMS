@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Policies\LessonPolicy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property-read Course $course
  * @property-read Collection<int, LessonProgress> $progress
  */
+#[UsePolicy(LessonPolicy::class)]
 final class Lesson extends Model
 {
     use HasFactory, SoftDeletes;

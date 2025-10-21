@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\StatusCoursesEnum;
+use App\Policies\CoursePolicy;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,6 +33,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, Enrollment> $enrollments
  * @property-read Collection<int, CourseCompletion> $completions
  */
+#[UsePolicy(CoursePolicy::class)]
 final class Course extends Model
 {
     use HasFactory, Sluggable, SoftDeletes;
