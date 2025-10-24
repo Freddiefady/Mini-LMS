@@ -14,7 +14,7 @@ final readonly class FirstUserEnrollmentsQuery
     /**
      * @throws Throwable
      */
-    public function builder(?int $courseId): Enrollment
+    public function builder(int $courseId): ?Enrollment
     {
         $completion = CourseCompletion::query()->find($courseId);
 

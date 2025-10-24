@@ -7,10 +7,11 @@ namespace App\Http\Controllers;
 use App\Actions\Enrollment\EnrollUserAction;
 use App\Models\Course;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 
 final class EnrollmentController extends Controller
 {
-    public function enroll(Course $course, EnrollUserAction $action)
+    public function enroll(Course $course, EnrollUserAction $action): RedirectResponse
     {
         $user = auth()->user();
 

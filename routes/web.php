@@ -38,7 +38,7 @@ Route::middleware(['auth'])->group(function (): void {
     Volt::route('settings/password', 'settings.password')->name('password.edit');
     Volt::route('settings/appearance', 'settings.appearance')->name('appearance.edit');
 
-    Volt::route('settings/two-factor', 'settings.two-factor')
+    Volt::route('settings/two-factor', 'settings.two-factor')// @phpstan-ignore-line
         ->middleware(
             when(  // @phpstan-ignore-line
                 Features::canManageTwoFactorAuthentication()

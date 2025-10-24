@@ -74,7 +74,13 @@ final class LessonResource extends Resource
                     ->sortable()
                     ->label('Order'),
                 TextColumn::make('duration_seconds')
-                    ->formatStateUsing(fn ($state): string => $state ? gmdate('i:s', $state) : 'N/A')
+                    ->formatStateUsing(function ($state): string {
+                        if (is_numeric($state)) {
+                            return gmdate('H:i:s', (int) $state);
+                        }
+
+                        return '00:00:00';
+                    })
                     ->label('Duration'),
                 IconColumn::make('is_free_preview')
                     ->boolean()

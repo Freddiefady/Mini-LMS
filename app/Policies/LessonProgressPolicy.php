@@ -19,7 +19,7 @@ final class LessonProgressPolicy
         return $user->id === $progress->user_id;
     }
 
-    public function create(): bool
+    public function create(): true
     {
         return true;
         // Any authenticated user can track progress

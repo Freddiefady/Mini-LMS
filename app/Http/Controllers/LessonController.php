@@ -9,6 +9,7 @@ use App\Actions\Progress\StartLessonAction;
 use App\Actions\Progress\UpdateWatchTimeAction;
 use App\Models\Course;
 use App\Models\Lesson;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
@@ -31,8 +32,8 @@ final class LessonController extends Controller
             ->where('user_id', $user)
             ->first();
 
-        $nextLesson = $lesson->getNext();
-        $prevLesson = $lesson->getPrevious();
+        $nextLesson = $lesson->getNextLesson();
+        $prevLesson = $lesson->getPreviousLesson();
 
         return view('lessons.show', [
             'lesson' => $lesson,
@@ -43,7 +44,7 @@ final class LessonController extends Controller
         ]);
     }
 
-    public function complete(Request $request, Lesson $lesson, CompleteLessonAction $action)
+    public function complete(Request $request, Lesson $lesson, CompleteLessonAction $action): JsonResponse
     {
         $user = auth()->user();
 
@@ -56,7 +57,7 @@ final class LessonController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function updateWatchTime(Request $request, Lesson $lesson, UpdateWatchTimeAction $action)
+    public function updateWatchTime(Request $request, Lesson $lesson, UpdateWatchTimeAction $action): JsonResponse
     {
         $user = auth()->user();
 

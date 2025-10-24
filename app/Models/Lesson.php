@@ -40,7 +40,7 @@ final class Lesson extends Model
 
     protected $casts = ['is_free_preview' => 'boolean'];
 
-    public function getNext(): ?self
+    public function getNextLesson(): ?self
     {
         return self::query()->where('course_id', $this->course_id)
             ->where('order', '>', $this->order)
@@ -48,7 +48,7 @@ final class Lesson extends Model
             ->first();
     }
 
-    public function getPrevious(): ?self
+    public function getPreviousLesson(): ?self
     {
         return self::query()->where('course_id', $this->course_id)
             ->where('order', '<', $this->order)
