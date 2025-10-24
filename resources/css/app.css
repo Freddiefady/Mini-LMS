@@ -1,66 +1,40 @@
 @import 'tailwindcss';
 @import '../../vendor/livewire/flux/dist/flux.css';
+@tailwind utilities;
 
-@source '../views';
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
-@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+@layer components {
+    .btn-primary {
+        @apply px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 font-semibold shadow-md hover:shadow-lg;
+    }
 
-@custom-variant dark (&:where(.dark, .dark *));
+    .btn-secondary {
+        @apply px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition duration-200 font-semibold dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
+    }
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-
-    --color-zinc-50: #fafafa;
-    --color-zinc-100: #f5f5f5;
-    --color-zinc-200: #e5e5e5;
-    --color-zinc-300: #d4d4d4;
-    --color-zinc-400: #a3a3a3;
-    --color-zinc-500: #737373;
-    --color-zinc-600: #525252;
-    --color-zinc-700: #404040;
-    --color-zinc-800: #262626;
-    --color-zinc-900: #171717;
-    --color-zinc-950: #0a0a0a;
-
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
-    --color-accent-foreground: var(--color-white);
-}
-
-@layer theme {
-    .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+    .card {
+        @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-6;
     }
 }
 
-@layer base {
-
-    *,
-    ::after,
-    ::before,
-    ::backdrop,
-    ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
-    }
+/* Dark mode transitions */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-[data-flux-field]:not(ui-radio, ui-checkbox) {
-    @apply grid gap-2;
+/* Custom Plyr theme */
+.plyr--video {
+    border-radius: 0.5rem;
+    overflow: hidden;
 }
 
-[data-flux-label] {
-    @apply  !mb-0 !leading-tight;
+.plyr__control--overlaid {
+    background: rgba(59, 130, 246, 0.9);
 }
 
-input:focus[data-flux-control],
-textarea:focus[data-flux-control],
-select:focus[data-flux-control] {
-    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+.plyr__control--overlaid:hover {
+    background: rgb(59, 130, 246);
 }
 
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */
+.plyr--full-ui input[type=range] {
+    color: rgb(59, 130, 246);
+}
