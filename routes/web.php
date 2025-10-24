@@ -16,12 +16,16 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::middleware(['auth'])->group(function (): void {
+Route::middleware(['check.enrollment'])->group(function (): void {
     Route::get('courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
-    Route::post('courses/{course:slug}/enroll', [EnrollmentController::class, 'enroll'])->name('enroll');
 
     Route::get('courses/{course:slug}/lessons/{lesson}', [LessonController::class, 'show'])
-        ->name('lessons.show');
+        ->name('lessons.show')
+        ->middleware('auth');
+});
+
+Route::middleware(['auth'])->group(function (): void {
+    Route::post('courses/{course:slug}/enroll', [EnrollmentController::class, 'enroll'])->name('enroll');
 
     Route::post('lessons/{lesson}/complete', [LessonController::class, 'complete'])
         ->name('lessons.complete');
