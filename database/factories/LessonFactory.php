@@ -27,7 +27,7 @@ final class LessonFactory extends Factory
         ];
     }
 
-    public function freePreview(): LessonFactory
+    public function freePreview(): self
     {
         return $this->state(fn (array $attributes): array => [
             'is_free_preview' => true,
