@@ -17,7 +17,9 @@ final class EnsureUserIsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        abort_if(! auth()->check() || ! auth()->user()->is_admin, 403, 'Unauthorized access to admin panel.');
+        $user = auth()->user();
+
+        abort_if(! $user || ! $user->is_admin, 403, 'Unauthorized access to this page.');
 
         return $next($request);
     }

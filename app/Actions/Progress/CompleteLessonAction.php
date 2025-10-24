@@ -33,7 +33,7 @@ final class CompleteLessonAction
             ], [
                 'completed_at' => now(),
                 'watch_seconds' => max($existing->watch_seconds ?? 0, $watchSeconds),
-                'started_at' => $existing?->started_at ?? now(),
+                'started_at' => $existing->started_at ?? now(),
             ]);
 
             // Check if course is now complete

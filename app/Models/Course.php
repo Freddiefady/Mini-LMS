@@ -98,6 +98,8 @@ final class Course extends Model
 
     /**
      * Return the sluggable configuration array for this model.
+     *
+     * @return array<string, array<string, mixed>>
      */
     public function sluggable(): array
     {

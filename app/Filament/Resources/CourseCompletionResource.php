@@ -7,6 +7,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CourseCompletionResource\Pages;
 use App\Filters\CompletedDateFilter;
 use App\Models\CourseCompletion;
+use App\Queries\FirstUserEnrollmentsQuery;
 use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -56,10 +57,8 @@ final class CourseCompletionResource extends Resource
                     ->label('Completed On'),
                 TextColumn::make('duration')
                     ->label('Time Taken')
-                    ->state(function (CourseCompletion $record): string {
-                        $enrollment = $record->user->enrollments()
-                            ->where('course_id', $record->course_id)
-                            ->first();
+                    ->state(function (CourseCompletion $record, FirstUserEnrollmentsQuery $query): string {
+                        $enrollment = $query->builder($record->course_id);
 
                         if (! $enrollment) {
                             return 'N/A';

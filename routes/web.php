@@ -6,15 +6,12 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LessonController;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
 Route::get('/', HomeController::class)->name('home');
-
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
 Route::middleware(['check.enrollment'])->group(function (): void {
     Route::get('courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
@@ -25,6 +22,9 @@ Route::middleware(['check.enrollment'])->group(function (): void {
 });
 
 Route::middleware(['auth'])->group(function (): void {
+
+    Route::get('/dashboard', fn (): View => view('dashboard'))->name('dashboard');
+
     Route::post('courses/{course:slug}/enroll', [EnrollmentController::class, 'enroll'])->name('enroll');
 
     Route::post('lessons/{lesson}/complete', [LessonController::class, 'complete'])

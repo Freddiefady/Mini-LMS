@@ -17,12 +17,10 @@ final class LessonFactory extends Factory
 
     public function definition(): array
     {
-        static $order = 0;
-
         return [
             'course_id' => Course::factory(),
             'title' => fake()->sentence(3),
-            'order' => ++$order,
+            'order' => $this->faker->numberBetween(1, 100),
             'video_url' => 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
             'duration_seconds' => fake()->numberBetween(60, 3600),
             'is_free_preview' => fake()->boolean(20),

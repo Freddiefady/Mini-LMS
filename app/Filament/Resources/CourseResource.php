@@ -19,6 +19,7 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 final class CourseResource extends Resource
 {
@@ -41,7 +42,7 @@ final class CourseResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn (?string $state, Set $set): mixed => $set('slug', \Illuminate\Support\Str::slug((string) $state).'-'.now()->timestamp)
+                    ->afterStateUpdated(fn (?string $state, Set $set): mixed => $set('slug', Str::slug((string) $state).'-'.now()->timestamp)
                     ),
                 TextInput::make('slug')
                     ->required()

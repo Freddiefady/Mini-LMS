@@ -25,7 +25,7 @@ final class StartLessonAction
                 'started_at' => now(),
             ]);
 
-            if ($progress->wasRecentlyCreated === false && $progress->started_at === null) {
+            if (! $progress->started_at) {
                 $progress->update(['started_at' => now()]);
             }
 

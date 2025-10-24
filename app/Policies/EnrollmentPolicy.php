@@ -14,7 +14,7 @@ final class EnrollmentPolicy
         return $user->id === $enrollment->user_id || $user->is_admin;
     }
 
-    public function create(): bool
+    public function create(): true
     {
         return true;
     }

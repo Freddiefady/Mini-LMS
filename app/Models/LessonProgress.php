@@ -31,8 +31,10 @@ final class LessonProgress extends Model
     protected $fillable = ['user_id', 'lesson_id', 'started_at', 'completed_at', 'watch_seconds'];
 
     protected $casts = [
-        'started_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
         'completed_at' => 'datetime',
+        'started_at' => 'datetime',
         'watch_seconds' => 'integer',
     ];
 

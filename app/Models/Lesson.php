@@ -42,18 +42,17 @@ final class Lesson extends Model
 
     public function getNext(): ?self
     {
-        return $this->course
-            ->lessons()
+        return self::query()->where('course_id', $this->course_id)
             ->where('order', '>', $this->order)
+            ->orderBy('order', 'asc')
             ->first();
     }
 
     public function getPrevious(): ?self
     {
-        return $this->course
-            ->lessons()
+        return self::query()->where('course_id', $this->course_id)
             ->where('order', '<', $this->order)
-            ->orderByDesc('order')
+            ->latest('order')
             ->first();
     }
 
@@ -73,6 +72,10 @@ final class Lesson extends Model
         return $this->hasMany(LessonProgress::class);
     }
 
+    /**
+     * @param  Builder<Lesson>  $query
+     * @return Builder<Lesson>
+     */
     #[Scope]
     protected function freePreview(Builder $query): Builder
     {

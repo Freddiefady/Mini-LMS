@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Policies\EnrollmentPolicy;
+use Database\Factories\EnrollmentFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +24,7 @@ use Illuminate\Support\Carbon;
 #[UsePolicy(EnrollmentPolicy::class)]
 final class Enrollment extends Model
 {
-    /** @use HasFactory<Enrollment> */
+    /** @use HasFactory<EnrollmentFactory> */
     use HasFactory;
 
     public $timestamps = false;

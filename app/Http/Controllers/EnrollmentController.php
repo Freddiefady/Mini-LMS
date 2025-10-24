@@ -12,8 +12,11 @@ final class EnrollmentController extends Controller
 {
     public function enroll(Course $course, EnrollUserAction $action)
     {
+        $user = auth()->user();
+
+        abort_unless($user !== null, 401, 'Unauthenticated');
         try {
-            $action->handle(auth()->user(), $course);
+            $action->handle($user, $course);
 
             return to_route('courses.show', $course->slug)
                 ->with('success', 'Enrolled successfully!');

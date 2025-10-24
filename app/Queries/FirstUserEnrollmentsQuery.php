@@ -5,17 +5,24 @@ declare(strict_types=1);
 namespace App\Queries;
 
 use App\Models\CourseCompletion;
+use App\Models\Enrollment;
+use RuntimeException;
+use Throwable;
 
 final readonly class FirstUserEnrollmentsQuery
 {
-    public function __construct(
-        private string $record,
-    ) {}
-
-    public function builder()
+    /**
+     * @throws Throwable
+     */
+    public function builder(?int $courseId): Enrollment
     {
-        return CourseCompletion::user()->enrollments()
-            ->where('course_id', $this->record->course_id)
+        $completion = CourseCompletion::query()->find($courseId);
+
+        throw_unless($completion, RuntimeException::class, 'Course completion not found');
+
+        return $completion->user
+            ->enrollments()
+            ->where('course_id', $completion->course_id)
             ->first();
     }
 }

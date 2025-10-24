@@ -17,14 +17,18 @@ final class LessonController extends Controller
 {
     public function show(Course $course, Lesson $lesson, StartLessonAction $action): View
     {
+        $user = auth()->user();
+
+        abort_unless($user !== null, 401, 'Unauthorized');
+
         // Check authorization
         Gate::authorize('view', $lesson);
 
         // Start tracking progress
-        $action->handle(auth()->user(), $lesson);
+        $action->handle($user, $lesson);
 
         $progress = $lesson->progress()
-            ->where('user_id', auth()->id())
+            ->where('user_id', $user)
             ->first();
 
         $nextLesson = $lesson->getNext();
@@ -41,18 +45,26 @@ final class LessonController extends Controller
 
     public function complete(Request $request, Lesson $lesson, CompleteLessonAction $action)
     {
+        $user = auth()->user();
+
+        abort_unless($user !== null, 401, 'Unauthorized');
+
         $watchSeconds = $request->integer('watch_seconds');
 
-        $action->handle(auth()->user(), $lesson, $watchSeconds);
+        $action->handle($user, $lesson, $watchSeconds);
 
         return response()->json(['success' => true]);
     }
 
     public function updateWatchTime(Request $request, Lesson $lesson, UpdateWatchTimeAction $action)
     {
+        $user = auth()->user();
+
+        abort_unless($user !== null, 401, 'Unauthorized');
+
         $seconds = $request->integer('seconds');
 
-        $action->handle(auth()->user(), $lesson, $seconds);
+        $action->handle($user, $lesson, $seconds);
 
         return response()->json(['success' => true]);
     }

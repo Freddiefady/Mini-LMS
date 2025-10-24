@@ -110,12 +110,20 @@ final class User extends Authenticatable
         ];
     }
 
+    /**
+     * @param  Builder<User>  $query
+     * @return Builder<User>
+     */
     #[Scope]
     protected function isAdmin(Builder $query): Builder
     {
         return $query->where('is_admin', true);
     }
 
+    /**
+     * @param  Builder<User>  $query
+     * @return Builder<User>
+     */
     #[Scope]
     protected function notAdmin(Builder $query): Builder
     {
