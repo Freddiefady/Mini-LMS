@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Policies\LessonProgressPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,7 @@ use Illuminate\Support\Carbon;
 #[UsePolicy(LessonProgressPolicy::class)]
 final class LessonProgress extends Model
 {
+    /** @use HasFactory<Factory> */
     use HasFactory;
 
     protected $fillable = ['user_id', 'lesson_id', 'started_at', 'completed_at', 'watch_seconds'];

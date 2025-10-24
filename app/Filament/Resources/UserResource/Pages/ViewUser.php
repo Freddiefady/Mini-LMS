@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Models\CourseCompletion;
+use App\Models\Enrollment;
+use App\Models\User;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -40,17 +43,17 @@ final class ViewUser extends ViewRecord
                 ->schema([
                     TextEntry::make('enrollments_count')
                         ->label('Total Enrollments')
-                        ->state(fn ($record) => $record->enrollments()->count())
+                        ->state(fn (User $record): int => $record->enrollments()->count())
                         ->badge()
                         ->color('primary'),
                     TextEntry::make('completions_count')
                         ->label('Courses Completed')
-                        ->state(fn ($record) => $record->courseCompletions()->count())
+                        ->state(fn (User $record): int => $record->courseCompletions()->count())
                         ->badge()
                         ->color('success'),
                     TextEntry::make('in_progress_count')
                         ->label('In Progress')
-                        ->state(function ($record): float|int {
+                        ->state(function (User $record): int {
                             $enrolled = $record->enrollments()->count();
                             $completed = $record->courseCompletions()->count();
 
@@ -60,7 +63,7 @@ final class ViewUser extends ViewRecord
                         ->color('warning'),
                     TextEntry::make('completion_rate')
                         ->label('Completion Rate')
-                        ->state(function ($record): string {
+                        ->state(function (User $record): string {
                             $enrolled = $record->enrollments()->count();
                             if ($enrolled === 0) {
                                 return '0%';
@@ -82,7 +85,7 @@ final class ViewUser extends ViewRecord
                         }),
                     TextEntry::make('total_watch_time')
                         ->label('Total Watch Time')
-                        ->state(function ($record): string {
+                        ->state(function (User $record): string {
                             $totalSeconds = $record->lessonProgress()->sum('watch_seconds');
                             if ($totalSeconds === 0) {
                                 return '0h 0m';
@@ -97,7 +100,7 @@ final class ViewUser extends ViewRecord
                         ->color('info'),
                     TextEntry::make('lessons_completed')
                         ->label('Lessons Completed')
-                        ->state(fn ($record) => $record->lessonProgress()->whereNotNull('completed_at')->count())
+                        ->state(fn (User $record): int => $record->lessonProgress()->whereNotNull('completed_at')->count())
                         ->badge(),
                 ])
                 ->columns(3),
@@ -118,10 +121,10 @@ final class ViewUser extends ViewRecord
                                 ->label('Enrolled On'),
                             TextEntry::make('progress')
                                 ->label('Progress')
-                                ->state(fn ($record): string => $record->course->getUserProgress($record->user).'%')
+                                ->state(fn (Enrollment $record): string => $record->course->getUserProgress($record->user).'%')
                                 ->badge()
                                 ->color(function ($state): string {
-                                    $percent = (int) str_replace('%', '', $state);
+                                    $percent = str_replace('%', '', $state);
 
                                     return match (true) {
                                         $percent === 100 => 'success',
@@ -131,7 +134,7 @@ final class ViewUser extends ViewRecord
                                 }),
                             TextEntry::make('status')
                                 ->label('Status')
-                                ->state(function ($record): string {
+                                ->state(function (Enrollment $record): string {
                                     $isCompleted = $record->user->courseCompletions()
                                         ->where('course_id', $record->course_id)
                                         ->exists();
@@ -175,7 +178,7 @@ final class ViewUser extends ViewRecord
                                 ->label('Completed On'),
                             TextEntry::make('duration')
                                 ->label('Time Taken')
-                                ->state(function ($record) {
+                                ->state(function (CourseCompletion $record) {
                                     $enrollment = $record->user->enrollments()
                                         ->where('course_id', $record->course_id)
                                         ->first();
@@ -190,7 +193,7 @@ final class ViewUser extends ViewRecord
                         ->columns(4),
                 ])
                 ->collapsed()
-                ->visible(fn ($record): bool => $record->courseCompletions()->count() > 0),
+                ->visible(fn (User $record): bool => $record->courseCompletions()->count() > 0),
 
             Section::make('Recent Activity')
                 ->schema([
@@ -215,7 +218,7 @@ final class ViewUser extends ViewRecord
                                 ->since(),
                         ])
                         ->columns(5)
-                        ->state(fn ($record) => $record->lessonProgress()
+                        ->state(fn (User $record) => $record->lessonProgress()
                             ->latest('updated_at')
                             ->limit(10)
                             ->get()

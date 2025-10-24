@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
 #[UsePolicy(EnrollmentPolicy::class)]
 final class Enrollment extends Model
 {
+    /** @use HasFactory<Enrollment> */
     use HasFactory;
 
     public $timestamps = false;

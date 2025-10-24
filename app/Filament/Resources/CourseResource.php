@@ -41,7 +41,7 @@ final class CourseResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn ($state, Set $set): mixed => $set('slug', \Illuminate\Support\Str::slug($state).'-'.now()->timestamp)
+                    ->afterStateUpdated(fn (?string $state, Set $set): mixed => $set('slug', \Illuminate\Support\Str::slug((string) $state).'-'.now()->timestamp)
                     ),
                 TextInput::make('slug')
                     ->required()

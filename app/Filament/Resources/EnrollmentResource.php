@@ -13,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 final class EnrollmentResource extends Resource
 {
@@ -49,18 +50,18 @@ final class EnrollmentResource extends Resource
                     ->label('Level'),
                 TextColumn::make('progress')
                     ->label('Progress')
-                    ->formatStateUsing(function ($record): string {
+                    ->formatStateUsing(function (Enrollment $record): string {
                         $progress = $record->course->getUserProgress($record->user);
 
-                        return $progress.'%';
+                        return ((int) $progress).'%';
                     })
                     ->badge()
-                    ->color(fn ($record): string => match (true) {
-                        $record->course->getUserProgress($record->user) === 100 => 'success',
-                        $record->course->getUserProgress($record->user) >= 50 => 'warning',
+                    ->color(fn (Enrollment $record): string => match (true) {
+                        $record->course->getUserProgress($record->user) === 100.0 => 'success',
+                        $record->course->getUserProgress($record->user) >= 50.0 => 'warning',
                         default => 'gray',
                     })
-                    ->sortable(query: fn ($query, string $direction) =>
+                    ->sortable(query: fn (Builder $query, string $direction): Builder =>
                         // Note: This is a simplified sort, actual implementation would need raw SQL
                     $query),
                 TextColumn::make('enrolled_at')
@@ -70,7 +71,7 @@ final class EnrollmentResource extends Resource
                 IconColumn::make('completed')
                     ->label('Completed')
                     ->boolean()
-                    ->getStateUsing(fn ($record): bool => $record->course->getUserProgress($record->user) === 100
+                    ->getStateUsing(fn (Enrollment $record): bool => $record->course->getUserProgress($record->user) === 100.0
                     ),
             ])
             ->filters([

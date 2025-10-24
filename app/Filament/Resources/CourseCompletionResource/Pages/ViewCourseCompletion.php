@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\CourseCompletionResource\Pages;
 
 use App\Filament\Resources\CourseCompletionResource;
+use App\Models\CourseCompletion;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -35,7 +36,7 @@ final class ViewCourseCompletion extends ViewRecord
                         ->label('Completion Date'),
                     TextEntry::make('enrollment_date')
                         ->label('Enrolled On')
-                        ->state(function ($record) {
+                        ->state(function (CourseCompletion $record) {
                             $enrollment = $record->user->enrollments()
                                 ->where('course_id', $record->course_id)
                                 ->first();
@@ -44,7 +45,7 @@ final class ViewCourseCompletion extends ViewRecord
                         }),
                     TextEntry::make('time_taken')
                         ->label('Time to Complete')
-                        ->state(function ($record) {
+                        ->state(function (CourseCompletion $record) {
                             $enrollment = $record->user->enrollments()
                                 ->where('course_id', $record->course_id)
                                 ->first();
@@ -64,22 +65,22 @@ final class ViewCourseCompletion extends ViewRecord
                 ->schema([
                     TextEntry::make('total_lessons')
                         ->label('Total Lessons')
-                        ->state(fn ($record) => $record->course->lessons()->count()),
+                        ->state(fn (CourseCompletion $record) => $record->course->lessons()->count()),
                     TextEntry::make('total_watch_time')
                         ->label('Total Watch Time')
-                        ->state(function ($record): string {
+                        ->state(function (CourseCompletion $record): string {
                             $totalSeconds = $record->user->lessonProgress()
                                 ->whereHas('lesson', fn ($q) => $q->where('course_id', $record->course_id))
                                 ->sum('watch_seconds');
 
-                            return $totalSeconds ? gmdate('H:i:s', $totalSeconds) : 'N/A';
+                            return $totalSeconds > 0 ? gmdate('H:i:s', (int) $totalSeconds) : 'N/A';
                         }),
                     TextEntry::make('course_duration')
                         ->label('Course Duration')
-                        ->state(function ($record): string {
+                        ->state(function (CourseCompletion $record): string {
                             $totalDuration = $record->course->lessons()->sum('duration_seconds');
 
-                            return $totalDuration ? gmdate('H:i:s', $totalDuration) : 'N/A';
+                            return $totalDuration > 0 ? gmdate('H:i:s', (int) $totalDuration) : 'N/A';
                         }),
                 ])
                 ->columns(3),

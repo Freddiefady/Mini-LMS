@@ -29,7 +29,7 @@ final class LessonsRelationManager extends RelationManager
                 TextInput::make('order')
                     ->numeric()
                     ->required()
-                    ->default(fn (): int|float => $this->getOwnerRecord()->lessons()->max('order') + 1),
+                    ->default(fn (): int => ((int) $this->getOwnerRecord()->lessons()->max('order')) + 1),
                 TextInput::make('video_url')
                     ->url()
                     ->required()
@@ -51,7 +51,7 @@ final class LessonsRelationManager extends RelationManager
                 TextColumn::make('order')->sortable(),
                 TextColumn::make('title')->searchable(),
                 TextColumn::make('duration_seconds')
-                    ->formatStateUsing(fn ($state): string => $state ? gmdate('i:s', $state) : 'N/A'),
+                    ->formatStateUsing(fn ($state): string => $state ? gmdate('i:s', (int) $state) : 'N/A'),
                 IconColumn::make('is_free_preview')
                     ->boolean()
                     ->label('Free Preview'),

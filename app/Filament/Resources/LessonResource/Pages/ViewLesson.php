@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\LessonResource\Pages;
 
 use App\Filament\Resources\LessonResource;
+use App\Models\Lesson;
 use Filament\Actions;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Section;
@@ -35,19 +36,19 @@ final class ViewLesson extends ViewRecord
                         ->boolean()
                         ->label('Free Preview'),
                 ])
-                ->columns(2),
+                ->columns(),
 
             Section::make('Statistics')
                 ->schema([
                     TextEntry::make('progress_count')
                         ->label('Total Views')
-                        ->state(fn ($record) => $record->progress()->count()),
+                        ->state(fn (Lesson $record) => $record->progress()->count()),
                     TextEntry::make('completed_count')
                         ->label('Completed By')
-                        ->state(fn ($record) => $record->progress()->whereNotNull('completed_at')->count()),
+                        ->state(fn (Lesson $record) => $record->progress()->whereNotNull('completed_at')->count()),
                     TextEntry::make('average_watch_time')
                         ->label('Avg Watch Time')
-                        ->state(function ($record): string {
+                        ->state(function (Lesson $record): string {
                             $avg = $record->progress()->avg('watch_seconds');
 
                             return $avg ? gmdate('i:s', $avg) : 'N/A';
@@ -62,7 +63,7 @@ final class ViewLesson extends ViewRecord
                     TextEntry::make('updated_at')
                         ->dateTime(),
                 ])
-                ->columns(2)
+                ->columns()
                 ->collapsed(),
         ]);
     }

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Actions\Progress;
 
 use App\Mail\CourseCompletionEmail;
+use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\LessonProgress;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
@@ -20,13 +22,18 @@ final class CompleteLessonAction
     public function handle(User $user, Lesson $lesson, int $watchSeconds = 0): LessonProgress
     {
         return DB::transaction(function () use ($user, $lesson, $watchSeconds) {
+            $existing = LessonProgress::query()->where([
+                'user_id' => $user->id,
+                'lesson_id' => $lesson->id,
+            ])->first();
+
             $progress = LessonProgress::query()->updateOrCreate([
                 'user_id' => $user->id,
                 'lesson_id' => $lesson->id,
             ], [
                 'completed_at' => now(),
-                'watch_seconds' => max($progress->watch_seconds ?? 0, $watchSeconds),
-                'started_at' => $progress->started_at ?? now(),
+                'watch_seconds' => max($existing->watch_seconds ?? 0, $watchSeconds),
+                'started_at' => $existing?->started_at ?? now(),
             ]);
 
             // Check if course is now complete
@@ -36,11 +43,11 @@ final class CompleteLessonAction
         });
     }
 
-    private function checkCourseCompletion(User $user, $course): void
+    private function checkCourseCompletion(User $user, Course $course): void
     {
         $totalLessons = $course->getTotalLessons();
         $completedLessons = $course->lessons()
-            ->whereHas('progress', function ($q) use ($user): void {
+            ->whereHas('progress', function (Builder $q) use ($user): void {
                 $q->where('user_id', $user->id)
                     ->whereNotNull('completed_at');
             })

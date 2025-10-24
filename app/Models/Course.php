@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,6 +37,7 @@ use Illuminate\Support\Carbon;
 #[UsePolicy(CoursePolicy::class)]
 final class Course extends Model
 {
+    /** @use HasFactory<Factory> */
     use HasFactory, Sluggable, SoftDeletes;
 
     protected $fillable = ['level_id', 'title', 'slug', 'description', 'image_url', 'status'];
@@ -107,8 +109,13 @@ final class Course extends Model
         ];
     }
 
+    public function isPublished(): bool
+    {
+        return $this->status->value === StatusCoursesEnum::PUBLISHED->value;
+    }
+
     /**
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     protected function casts(): array
     {
@@ -124,6 +131,10 @@ final class Course extends Model
         ];
     }
 
+    /**
+     * @param  Builder<Course>  $query
+     * @return Builder<Course>
+     */
     #[Scope]
     protected function published(Builder $query): Builder
     {

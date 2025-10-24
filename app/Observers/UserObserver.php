@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Mail;
 
 final class UserObserver
 {
-    public function created(User $user)
+    public function created(User $user): void
     {
-        return Mail::queue(new WelcomeEmail($user));
+        Mail::to($user)->queue(new WelcomeEmail($user));
     }
 }

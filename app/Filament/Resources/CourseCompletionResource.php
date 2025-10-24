@@ -56,7 +56,7 @@ final class CourseCompletionResource extends Resource
                     ->label('Completed On'),
                 TextColumn::make('duration')
                     ->label('Time Taken')
-                    ->state(function ($record): string {
+                    ->state(function (CourseCompletion $record): string {
                         $enrollment = $record->user->enrollments()
                             ->where('course_id', $record->course_id)
                             ->first();
@@ -91,8 +91,8 @@ final class CourseCompletionResource extends Resource
                     ])
                     ->query(fn ($query, array $data) => Pipeline::send($query)
                         ->through([
-                            new CompletedDateFilter((string) $data['completed_from']),
-                            new CompletedDateFilter($data['completed_until'], '<='),
+                            new CompletedDateFilter($data['completed_from'] !== null ? (string) $data['completed_from'] : null),
+                            new CompletedDateFilter($data['completed_until'] !== null ? (string) $data['completed_until'] : null, '<='),
                         ])
                         ->thenReturn()),
             ])

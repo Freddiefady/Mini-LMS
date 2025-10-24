@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,6 +33,7 @@ use Illuminate\Support\Carbon;
 #[UsePolicy(LessonPolicy::class)]
 final class Lesson extends Model
 {
+    /** @use HasFactory<Factory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = ['course_id', 'title', 'order', 'video_url', 'duration_seconds', 'is_free_preview'];
