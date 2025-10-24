@@ -2,20 +2,34 @@
 
 declare(strict_types=1);
 
-use Illuminate\Contracts\View\View;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LessonController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
-Route::get('/', fn (): View => view('welcome'))->name('home');
+Route::get('/', HomeController::class)->name('home');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
 Route::middleware(['auth'])->group(function (): void {
-    Route::redirect('settings', 'settings/profile');
+    Route::get('courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
+    Route::post('courses/{course:slug}/enroll', [EnrollmentController::class, 'enroll'])->name('enroll');
 
+    Route::get('courses/{course:slug}/lessons/{lesson}', [LessonController::class, 'show'])
+        ->name('lessons.show');
+
+    Route::post('lessons/{lesson}/complete', [LessonController::class, 'complete'])
+        ->name('lessons.complete');
+
+    Route::post('lessons/{lesson}/watch-time', [LessonController::class, 'updateWatchTime'])
+        ->name('lessons.watch-time');
+
+    Route::redirect('settings', 'settings/profile');
     Volt::route('settings/profile', 'settings.profile')->name('profile.edit');
     Volt::route('settings/password', 'settings.password')->name('password.edit');
     Volt::route('settings/appearance', 'settings.appearance')->name('appearance.edit');
