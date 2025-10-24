@@ -6,59 +6,104 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EnrollmentResource\Pages;
 use App\Models\Enrollment;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 final class EnrollmentResource extends Resource
 {
     protected static ?string $model = Enrollment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
-    }
+    protected static ?int $navigationSort = 5;
+
+    protected static ?string $navigationLabel = 'Enrollments';
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable(),
+                TextColumn::make('user.name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Student'),
+                TextColumn::make('user.email')
+                    ->searchable()
+                    ->copyable()
+                    ->label('Email'),
+                TextColumn::make('course.title')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(30)
+                    ->label('Course'),
+                TextColumn::make('course.level.name')
+                    ->badge()
+                    ->label('Level'),
+                TextColumn::make('progress')
+                    ->label('Progress')
+                    ->formatStateUsing(function ($record): string {
+                        $progress = $record->course->getUserProgress($record->user);
+
+                        return $progress.'%';
+                    })
+                    ->badge()
+                    ->color(fn ($record): string => match (true) {
+                        $record->course->getUserProgress($record->user) === 100 => 'success',
+                        $record->course->getUserProgress($record->user) >= 50 => 'warning',
+                        default => 'gray',
+                    })
+                    ->sortable(query: fn ($query, string $direction) =>
+                        // Note: This is a simplified sort, actual implementation would need raw SQL
+                    $query),
+                TextColumn::make('enrolled_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->label('Enrolled'),
+                IconColumn::make('completed')
+                    ->label('Completed')
+                    ->boolean()
+                    ->getStateUsing(fn ($record): bool => $record->course->getUserProgress($record->user) === 100
+                    ),
             ])
             ->filters([
-                //
+                SelectFilter::make('course')
+                    ->relationship('course', 'title')
+                    ->searchable()
+                    ->preload()
+                    ->label('Filter by Course'),
+                SelectFilter::make('user')
+                    ->relationship('user', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('Filter by Student'),
+                Filter::make('completed')
+                    ->label('Completed Only'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
+            ->bulkActions([])
+            ->defaultSort('enrolled_at', 'desc');
     }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListEnrollments::route('/'),
-            'create' => Pages\CreateEnrollment::route('/create'),
             'view' => Pages\ViewEnrollment::route('/{record}'),
-            'edit' => Pages\EditEnrollment::route('/{record}/edit'),
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false; // Enrollments created through public site
     }
 }
