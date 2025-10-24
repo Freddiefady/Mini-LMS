@@ -7,6 +7,8 @@ namespace App\Models;
 use App\Observers\UserObserver;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -106,5 +108,17 @@ final class User extends Authenticatable
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+
+    #[Scope]
+    protected function isAdmin(Builder $query): Builder
+    {
+        return $query->where('is_admin', true);
+    }
+
+    #[Scope]
+    protected function notAdmin(Builder $query): Builder
+    {
+        return $query->where('is_admin', false);
     }
 }
