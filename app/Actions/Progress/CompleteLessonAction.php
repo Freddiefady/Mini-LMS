@@ -54,7 +54,7 @@ final class CompleteLessonAction
 
             if (! $existing) {
                 $course->completions()->create(['user_id' => $user->id]);
-                Mail::send(new CourseCompletionEmail($user, $course))->queue();
+                Mail::to($user)->queue(new CourseCompletionEmail($user, $course));
             }
         }
     }
